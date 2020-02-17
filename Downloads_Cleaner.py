@@ -5,8 +5,10 @@ import time
 from watchdog.events import FileSystemEventHandler
 import random
 
+# This program will naviagte the selected folder and move files to their destiation based on defined parameters
 
 def FilenameChange(file_to_rename):
+#     this function take in the file and return the name appended with random value if it exist to avoid conflicts
     name, ext = os.path.splitext(file_to_rename)
     num = random.randint(1, 10)
     new_name = f'{name}{num}{ext}'
@@ -14,6 +16,7 @@ def FilenameChange(file_to_rename):
 
 
 class MyCleaner(FileSystemEventHandler):
+#     this class will be handling moves and renaming
     def on_modified(self, event):
         for folder in folders_to_track:
             os.chdir(folder)
@@ -21,6 +24,8 @@ class MyCleaner(FileSystemEventHandler):
 
             for f in folder_new:
                 file_name, file_ext = os.path.splitext(f)
+#                 for files which are not folders or invalid,
+# the following will be executed
                 if file_ext != '':
                     try:
                         if file_ext in executables:
@@ -147,11 +152,14 @@ downloading = ['.crdownload', '.download']
 
 folders_to_track = ["C:/Users/Feyton Inc/Downloads"]
 
+# defining the class that will be called on modification of the directory being monitored
 event_handler = MyCleaner()
 observer = Observer()
 observer.schedule(event_handler, folders_to_track[0], recursive=True)
 observer.start()
 
+
+# executing command
 try:
     while True:
         time.sleep(10)
